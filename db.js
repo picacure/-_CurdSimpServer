@@ -24,54 +24,65 @@ db.open(function (err, db) {
 });
 
 exports.findById = function (req, res) {
-	var id = req.params.id;
-	console.log('Retrieving item: ' + id);
+	var phoneNum = req.params.id;
+	console.log('Retrieving item: ' + phoneNum);
 	db.collection('items', function (err, collection) {
-		collection.findOne({'_id': new BSON.ObjectID(id)}, function (err, item) {
-			res.send(item);
+		collection.findOne({'phone': phoneNum.toString()}, function (err, item) {
+
+			if (err) {
+				res.send({'error': 'An error has occurred'});
+			} else {
+				res.send(item);
+			}
 		});
 	});
 };
 
 exports.findAll = function (req, res) {
+	//JsonP
+
+	console.log("find all called");
+	var q = req.query;
+
 	db.collection('items', function (err, collection) {
 		collection.find().toArray(function (err, items) {
-			res.send(items);
+			res.send(q.callback + '('+ JSON.stringify(items) + ');');
 		});
 	});
 };
 
 exports.addItem = function (req, res) {
-	var id = req.params.id;
-	console.log('Adding item id: ' + JSON.stringify(id));
 
-	var item = [{
-		phone: id,
+	var q = req.query;
+	console.log('Adding item: ' + JSON.stringify(q));
+
+	var item = {
+		phone: q.phone,
 		comments: [
 			{
-				who: "18908333212",
-				rank: 0,
-				comment: "这个家伙是个坏蛋",
-				support: 10,
-				against: 9,
-				time: "2012-3-19:9:10"
+				who: q.who,
+				rank: q.rank,
+				comment: q.comment,
+				time: Date.now()
 			}
 		]
-	}];
+	};
 
 	db.collection('items', function (err, collection) {
 		collection.insert(item, {safe: true}, function (err, result) {
 			if (err) {
 				res.send({'error': 'An error has occurred'});
 			} else {
-				console.log('Success: ' + JSON.stringify(result[0]));
-				res.send(result[0]);
+				res.send(q.callback + '('+ JSON.stringify({ ok: 'OK'}) + ');');
 			}
 		});
 	});
+
 }
 
 exports.updateItem = function (req, res) {
+
+
 	var id = req.params.id;
 	var item = req.body;
 	console.log('Updating item: ' + id);
