@@ -19,7 +19,7 @@ app.all('/', function(req, res, next) {
 
 
 app.get('/all', db.findAll);
-app.get('/one/:id', db.findById);
+app.get('/one', db.findById);
 app.get('/add',db.addItem);
 
 

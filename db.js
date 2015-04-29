@@ -24,15 +24,31 @@ db.open(function (err, db) {
 });
 
 exports.findById = function (req, res) {
-	var phoneNum = req.params.id;
+	var q = req.query;
+	var phoneNum = q.id;
 	console.log('Retrieving item: ' + phoneNum);
 	db.collection('items', function (err, collection) {
-		collection.findOne({'phone': phoneNum.toString()}, function (err, item) {
+//		collection.findOne({'phone': phoneNum}, function (err, item) {
+//
+//			if (err) {
+//				res.send({'error': 'An error has occurred'});
+//				console.log("findById error");
+//			} else {
+//				res.send(q.callback + '('+ JSON.stringify(item) + ');');
+//
+//				console.log("findById result: " + item);
+//			}
+//		});
+
+		collection.find({'phone': phoneNum}).toArray(function (err, result) {
 
 			if (err) {
 				res.send({'error': 'An error has occurred'});
+				console.log("findById error");
 			} else {
-				res.send(item);
+				res.send(q.callback + '('+ JSON.stringify(result) + ');');
+
+				console.log("findById result: " + result);
 			}
 		});
 	});
@@ -40,8 +56,6 @@ exports.findById = function (req, res) {
 
 exports.findAll = function (req, res) {
 	//JsonP
-
-	console.log("find all called");
 	var q = req.query;
 
 	db.collection('items', function (err, collection) {
@@ -58,14 +72,10 @@ exports.addItem = function (req, res) {
 
 	var item = {
 		phone: q.phone,
-		comments: [
-			{
-				who: q.who,
-				rank: q.rank,
-				comment: q.comment,
-				time: Date.now()
-			}
-		]
+		who: q.who,
+		rank: q.rank,
+		comment: q.comment,
+		tick: q.tick
 	};
 
 	db.collection('items', function (err, collection) {
@@ -120,45 +130,21 @@ var populateDB = function () {
 	var cell = [
 		{
 			phone: "13378628902",
-			comments: [
-				{
-					who: "18908333212",
-					rank: 0,
-					comment: "这个家伙是个坏蛋",
-					support: 10,
-					against: 9,
-					time: "2012-3-19:9:10"
-				},
-				{
-					who: "11208333212",
-					rank: 10,
-					comment: "这个家伙是个好人",
-					support: 10,
-					against: 9,
-					time: "2012-3-19:9:10"
-				}
-			]
+			who: "18908333212",
+			rank: 0,
+			comment: "这个家伙是个坏蛋",
+			support: 10,
+			against: 9,
+			tick: "2012-3-19:9:10"
 		},
 		{
 			phone: "13178628902",
-			comments: [
-				{
-					who: "10908333212",
-					rank: 0,
-					comment: "这个家伙是个gay",
-					support: 10,
-					against: 9,
-					time: "2012-3-19:9:10"
-				},
-				{
-					who: "13208333212",
-					rank: 10,
-					comment: "这个家伙是个拉拉",
-					support: 10,
-					against: 9,
-					time: "2012-3-19:9:10"
-				}
-			]
+			who: "10908333212",
+			rank: 0,
+			comment: "这个家伙是个gay",
+			support: 10,
+			against: 9,
+			tick: "2012-3-19:9:10"
 		}
 	];
 
