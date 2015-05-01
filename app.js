@@ -4,7 +4,8 @@
 
 
 var express = require('express'),
-	db = require('./db');
+	youpingDB = require('./dbs/youping'),
+	wuyiDB = require('./dbs/wuyi');
 
 var app = express();
 
@@ -16,11 +17,12 @@ app.all('/', function(req, res, next) {
 	next();
 });
 
+app.get('/all', youpingDB.findAll);
+app.get('/one', youpingDB.findById);
+app.get('/add',youpingDB.addItem);
 
-
-app.get('/all', db.findAll);
-app.get('/one', db.findById);
-app.get('/add',db.addItem);
+app.get('/wuyi/all', wuyiDB.findAll);
+app.get('/wuyi/add',wuyiDB.addItem);
 
 
 app.listen(3000);
