@@ -3,9 +3,10 @@
  */
 
 
-var express = require('express'),
-	youpingDB = require('./dbs/youping'),
-	wuyiDB = require('./dbs/wuyi');
+var express = require('express');
+var youpingDB = require('./dbs/youping');
+var wuyiDB = require('./dbs/wuyi');
+var pengyoupaiDB = require('./dbs/pengyoupai');
 
 var app = express();
 
@@ -24,6 +25,9 @@ app.get('/add',youpingDB.addItem);
 app.get('/wuyi/all', wuyiDB.findAll);
 app.get('/wuyi/add',wuyiDB.addItem);
 
+
+app.get('/pengyoupai/one', pengyoupaiDB.findOne);
+app.get('/pengyoupai/add',pengyoupaiDB.addItem);
 
 app.listen(3000);
 console.log('Listening on port 3000...');
